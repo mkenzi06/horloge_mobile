@@ -19,11 +19,10 @@ class _TimezonesScreenState extends State<TimezonesScreen> {
   }
 
   Future<void> _loadTimeZones() async {
-    final String response =
-        await rootBundle.loadString('assets/timezones.json');
-    final data = await json.decode(response);
+    final String response = await rootBundle.loadString("assets/timezone.json");
+    final data = json.decode(response);
     setState(() {
-      _timeZones = (data['time_zones'] as List)
+      _timeZones = (data['time_zone'] as List)
           .map((json) => TimeZone.fromJson(json))
           .toList();
     });
@@ -31,34 +30,48 @@ class _TimezonesScreenState extends State<TimezonesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _timeZones.length,
-      itemBuilder: (context, index) {
-        final timeZone = _timeZones[index];
-        return ListTile(
-          title: Text('${timeZone.mainCity} (${timeZone.code})'),
-          subtitle: Text('Offset: ${timeZone.offset}'),
-          onTap: () {
-            final DateTime now =
-                DateTime.now().toUtc().add(_parseOffset(timeZone.offset));
-            final String formattedDateTime = DateFormat('HH:mm:ss').format(now);
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('${timeZone.mainCity} (${timeZone.code})'),
-                content: Text('Current time: $formattedDateTime'),
-              ),
-            );
-          },
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Fuseaux Horaires'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemCount: _timeZones.length,
+              itemBuilder: (context, index) {
+                final timeZone = _timeZones[index];
+                return ListTile(
+                  title: Text('${timeZone.mainCity} (${timeZone.code})'),
+                  subtitle: Text('Offset: ${timeZone.offset}'),
+                  onTap: () {
+                    final DateTime now = DateTime.now()
+                        .toUtc()
+                        .add(_parseOffset(timeZone.offset));
+                    final String formattedDateTime =
+                        DateFormat('HH:mm:ss').format(now);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('${timeZone.mainCity} (${timeZone.code})'),
+                        content: Text('Current time: $formattedDateTime'),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Duration _parseOffset(String offset) {
-    final parts = offset.split(':');
-    final hours = int.parse(parts[0].substring(3));
-    final minutes = int.parse(parts[1]);
+    final sign = offset.startsWith('-') ? -1 : 1;
+    final parts = offset.substring(4).split(':');
+    final hours = int.parse(parts[0]) * sign;
+    final minutes = int.parse(parts[1]) * sign;
     return Duration(hours: hours, minutes: minutes);
   }
 }

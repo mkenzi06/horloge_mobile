@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -38,10 +37,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        _timeString,
-        style: TextStyle(fontSize: 48),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Horloge', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Text(
+            _timeString,
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+              fontFamily: 'RobotoMono',
+            ),
+          ),
+        ),
       ),
     );
   }

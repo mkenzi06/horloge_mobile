@@ -15,22 +15,27 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SwitchListTile(
-            title: Text('Mode sombre'),
-            value: isDarkMode,
-            onChanged: onDarkModeChanged,
-          ),
-          SwitchListTile(
-            title: Text('Format 24 heures'),
-            value: is24HourFormat,
-            onChanged: on24HourFormatChanged,
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Paramètres'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile(
+              title: Text('Mode sombre'),
+              value: isDarkMode,
+              onChanged: onDarkModeChanged,
+            ),
+            SwitchListTile(
+              title: Text('Format 24 heures'),
+              value: is24HourFormat,
+              onChanged: on24HourFormatChanged,
+            ),
+          ],
+        ),
       ),
     );
   }

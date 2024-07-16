@@ -1,27 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:horloge_mobile/middleware/preferences_service.dart';
 import 'package:horloge_mobile/screens/accueil_screen.dart';
 import 'package:horloge_mobile/screens/param.dart';
 import 'package:horloge_mobile/screens/timeszones_screen.dart';
 import 'package:horloge_mobile/widgets/nav_bottom_bar.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final preferencesService = PreferencesService();
+  final preferences = await preferencesService.loadPreferences();
+
+  runApp(MyApp(
+    is24HourFormat: preferences['is24HourFormat']!,
+    isDarkMode: preferences['isDarkMode']!,
+  ));
 }
 
 class MyApp extends StatefulWidget {
+  final bool is24HourFormat;
+  final bool isDarkMode;
+
+  MyApp({required this.is24HourFormat, required this.isDarkMode});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
-  bool _isDarkMode = false;
-  bool _is24HourFormat = true;
+  late bool _isDarkMode;
+  late bool _is24HourFormat;
+
+  final PreferencesService _preferencesService = PreferencesService();
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = widget.isDarkMode;
+    _is24HourFormat = widget.is24HourFormat;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _updatePreferences() async {
+    await _preferencesService.savePreferences(
+      is24HourFormat: _is24HourFormat,
+      isDarkMode: _isDarkMode,
+    );
   }
 
   @override
@@ -41,11 +71,13 @@ class _MyAppState extends State<MyApp> {
                 setState(() {
                   _isDarkMode = value;
                 });
+                _updatePreferences();
               },
               on24HourFormatChanged: (value) {
                 setState(() {
                   _is24HourFormat = value;
                 });
+                _updatePreferences();
               },
             ),
           ],
